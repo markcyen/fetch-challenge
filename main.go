@@ -1,13 +1,14 @@
 package main
 
 import (
+	"fetch-challenge/handlers"
 	"fmt"
 	"log"
 	"net/http"
 )
 
 func main() {
-	// http.HandlerFunc("/receipts/process", handlers.ProcessReceiptHandler)
+	http.HandleFunc("/receipts/process", handlers.ProcessReceiptHandler)
 	// http.HandlerFunc("/receipts/", handlers.GetPointsHandler)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
