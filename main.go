@@ -9,7 +9,7 @@ import (
 
 func main() {
 	http.HandleFunc("/receipts/process", handlers.ProcessReceiptHandler)
-	// http.HandlerFunc("/receipts/", handlers.GetPointsHandler)
+	http.HandleFunc("/receipts/:id/points", handlers.GetPointsHandler)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "hello world")

@@ -30,6 +30,8 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Generate hash for receipt to capture any duplicates
 	receiptHash := utils.GenerateReceiptHash(receipt)
+
+	// Store receipt id and details in in-memory storage
 	mu.Lock()
 	defer	mu.Unlock()
 
