@@ -4,12 +4,14 @@ import (
 	"encoding/json"
 	"fetch-challenge/models"
 	"fetch-challenge/utils"
+	"log"
 	"net/http"
 	"sync"
 )
 
 var (
 	receipts = make(map[string]models.Receipt)
+	receiptHashes = make(map[string]string)
 	mu       sync.Mutex
 )
 
@@ -26,10 +28,24 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := utils.GenerateUniqueID()
+	// Generate hash for receipt to capture any duplicates
+	receiptHash := utils.GenerateReceiptHash(receipt)
 	mu.Lock()
+	defer	mu.Unlock()
+
+	// Check if existing ID exists for a receipt that has already been processed
+	if existingID, found := receiptHashes[receiptHash]; found {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]string{"id": existingID})
+		return
+	}
+
+	// Generate unique id for new receipt
+	id := utils.GenerateUniqueID()
 	receipts[id] = receipt
-	mu.Unlock()
+	receiptHashes[receiptHash] = id
+
+	log.Printf("\nReceipt saved: ID=%s, Hash: %s, Data=%+v\n", id, receiptHash, receipt)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{"id": id})

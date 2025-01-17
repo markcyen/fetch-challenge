@@ -17,7 +17,7 @@ func TestProcessReceiptHandler(t *testing.T) {
 	}{
 		{
 			name:           "Valid Request",
-			requestBody:    `{"retailer":"Target","purchaseDate":"2025-01-15","purchaseTime":"12:00:00","items":[{"description":"Apples","price":2.99},{"description":"Bananas","price":1.49}],"total":4.48}`,
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi - 12-oz","price":1.25},{"shortDescription":"Dasani","price":1.40}],"total":2.65}`,
 			expectedStatus: http.StatusOK,
 			expectedBody:   `"id":`,
 		},
@@ -29,9 +29,15 @@ func TestProcessReceiptHandler(t *testing.T) {
 		},
 		{
 			name:           "Invalid JSON",
-			requestBody:    `{"retailer":"Target",`,
+			requestBody:    `{"retailer":"Walgreens",`,
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   "Invalid JSON payload\n",
+		},
+		{
+			name: "Duplicate Receipt",
+			requestBody: `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi - 12-oz","price":1.25},{"shortDescription":"Dasani","price":1.40}],"total":2.65}`,
+			expectedStatus: http.StatusOK,
+			expectedBody: `"id:`,
 		},
 	}
 

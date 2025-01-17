@@ -13,6 +13,6 @@ type Receipt struct {
 }
 
 type Item struct {
-	Description string  `json:"description"`
+	ShortDescription string  `json:"shortDescription"`
 	Price       float64 `json:"price"`
 }
