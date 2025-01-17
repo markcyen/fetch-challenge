@@ -5,14 +5,18 @@ type Receipts struct {
 }
 
 type Receipt struct {
-	Retailer     string  `json:"retailer"`
-	PurchaseDate string  `json:"purchaseDate"`
-	PurchaseTime string  `json:"purchaseTime"`
-	Items        []Item  `json:"items"`
-	Total        float64 `json:"total"`
+	Retailer     string `json:"retailer"`
+	PurchaseDate string `json:"purchaseDate"`
+	PurchaseTime string `json:"purchaseTime"`
+	Items        []Item `json:"items"`
+	Total        string `json:"total"`
 }
 
 type Item struct {
-	ShortDescription string  `json:"shortDescription"`
-	Price       float64 `json:"price"`
+	ShortDescription string `json:"shortDescription"`
+	Price            string `json:"price"`
+}
+
+type ReceiptResponse struct {
+	ID string `json:"id"`
 }

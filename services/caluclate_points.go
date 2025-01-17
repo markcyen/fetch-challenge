@@ -1,13 +1,26 @@
 package services
 
-import "fetch-challenge/models"
+import (
+	"fetch-challenge/models"
+	"strings"
+	"unicode"
+)
 
 func CalculatePoints(receipt models.Receipt) int {
 	points := 0
 
-	// Add one point for every alphanumeric charater in retailer name
+	// Add one point for every alphanumeric character in retailer name
+	for _, char := range receipt.Retailer {
+		if unicode.IsLetter(char) || unicode.IsDigit(char) {
+			points++
+		}
+	}
 
-	// Add 50 points if total is round dollar amount
+	// Add 50 points if total is round dollar amount with no cents
+	total_price := strings.Split(receipt.Total, ".")
+	if total_price[1] == "00" {
+		points += 50
+	}
 
 	// Add 25 points if total is a multiple of 0.25
 

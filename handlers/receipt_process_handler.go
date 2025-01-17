@@ -49,6 +49,10 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("\nReceipt saved: ID=%s, Hash: %s, Data=%+v\n", id, receiptHash, receipt)
 
+	response := models.ReceiptResponse{ID: id}
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"id": id})
+	if err := json.NewEncoder(w).Encode(response); err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
 }

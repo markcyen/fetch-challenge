@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 func main() {
-	http.HandleFunc("/receipts/process", handlers.ProcessReceiptHandler)
-	http.HandleFunc("/receipts/:id/points", handlers.GetPointsHandler)
+	r := mux.NewRouter()
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintln(w, "hello world")
-	})
+	http.HandleFunc("/receipts/process", handlers.ProcessReceiptHandler)
+	r.HandleFunc("/receipts/{id}/points", handlers.GetPointsHandler).Methods("GET")
 
 	fmt.Println("Starting server on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
