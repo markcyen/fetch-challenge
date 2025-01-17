@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"bytes"
+	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -34,12 +35,15 @@ func TestProcessReceiptHandler(t *testing.T) {
 			expectedBody:   "Invalid JSON payload\n",
 		},
 		{
-			name: "Duplicate Receipt",
-			requestBody: `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi - 12-oz","price":1.25},{"shortDescription":"Dasani","price":1.40}],"total":2.65}`,
+			name:           "Duplicate Receipt",
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi - 12-oz","price":1.25},{"shortDescription":"Dasani","price":1.40}],"total":2.65}`,
 			expectedStatus: http.StatusOK,
-			expectedBody: `"id:`,
+			expectedBody:   `"id:`,
 		},
 	}
+
+	// previousID stored receipt ID to test duplicates
+	var previousID string
 
 	// Iterate over test cases
 	for _, tc := range tests {
@@ -62,8 +66,29 @@ func TestProcessReceiptHandler(t *testing.T) {
 			}
 
 			// Assert the response body (partial match for flexibility)
-			if !strings.Contains(rr.Body.String(), tc.expectedBody) {
-				t.Errorf("Test %q failed: response body = %q, want partial match with %q", tc.name, rr.Body.String(), tc.expectedBody)
+			if tc.name != "Duplicate Receipt" {
+				if !strings.Contains(rr.Body.String(), tc.expectedBody) {
+					t.Errorf("Test %q failed: response body = %q, want partial match with %q", tc.name, rr.Body.String(), tc.expectedBody)
+				}
+			}
+
+			if tc.name == "Duplicate Receipt" {
+				// Extract the receipt ID from the response
+				var response map[string]string
+				if err := json.Unmarshal(rr.Body.Bytes(), &response); err != nil {
+					t.Fatalf("Failed to parse response: %v", err)
+				}
+				currentID, exists := response["id"]
+				if !exists {
+					t.Fatalf("Response does not contain 'id': %v", rr.Body.String())
+				}
+
+				// Check if the ID matches the one from the previous "Valid Request" test
+				if previousID == "" {
+					previousID = currentID // Store the ID from the first valid request
+				} else if previousID != currentID {
+					t.Errorf("Expected duplicate receipt to return the same ID, got %q and %q", previousID, currentID)
+				}
 			}
 		})
 	}
