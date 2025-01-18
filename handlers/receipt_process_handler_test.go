@@ -18,7 +18,7 @@ func TestProcessReceiptHandler(t *testing.T) {
 	}{
 		{
 			name:           "Valid Request",
-			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi - 12-oz","price":1.25},{"shortDescription":"Dasani","price":1.40}],"total":2.65}`,
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi 12PK","price":1.25},{"shortDescription":"Dasani","price":1.40}],"total":2.65}`,
 			expectedStatus: http.StatusOK,
 			expectedBody:   `"id":`,
 		},
@@ -36,7 +36,7 @@ func TestProcessReceiptHandler(t *testing.T) {
 		},
 		{
 			name:           "Duplicate Receipt",
-			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi - 12-oz","price":1.25},{"shortDescription":"Dasani","price":1.40}],"total":2.65}`,
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi 12PK","price":1.25},{"shortDescription":"Dasani","price":1.40}],"total":2.65}`,
 			expectedStatus: http.StatusOK,
 			expectedBody:   `"id:`,
 		},

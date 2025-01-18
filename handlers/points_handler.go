@@ -4,17 +4,14 @@ import (
 	"encoding/json"
 	"fetch-challenge/services"
 	"net/http"
-	"strings"
+
+	"github.com/gorilla/mux"
 )
 
 func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-	}
-
-	// Extract the receipt ID from URL path (/receipts/:id/points)
-	id := strings.TrimPrefix(r.URL.Path, "/receipts/")
-	id = strings.TrimSuffix(id, "/points")
+	// Extract the receipt ID from URL path (/receipts/{id}/points)
+	vars := mux.Vars(r)
+	id := vars["id"]
 
 	// Check the existance of an id
 	if id == "" {
@@ -33,7 +30,11 @@ func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Calculate points
-	points := services.CalculatePoints(receipt)
+	points, err := services.CalculatePoints(receipt)
+	if err != nil {
+		http.Error(w, "Error in points calculation", http.StatusUnprocessableEntity)
+		return
+	}
 
 	// Respond with the points
 	w.Header().Set("Content-Type", "application/json")

@@ -17,11 +17,6 @@ var (
 
 // ProcessReceiptHandler takes a receipt and generates an id for it
 func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
-		return
-	}
-
 	var receipt models.Receipt
 	if err := json.NewDecoder(r.Body).Decode(&receipt); err != nil {
 		http.Error(w, "Invalid JSON payload", http.StatusBadRequest)
