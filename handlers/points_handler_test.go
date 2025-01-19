@@ -72,25 +72,16 @@ func TestGetPointsHandler(t *testing.T) {
 			// Override `receipts` for the test case
 			receipts = tc.mockReceipts
 
-			// Create the request
 			req, err := http.NewRequest(http.MethodGet, "/receipts/"+tc.id+"/points", nil)
-			if err != nil {
-				t.Fatalf("Unexpected error: %v", err)
-			}
+			require.NoError(t, err)
 
 			// Mock the path variables for the request
 			req = mux.SetURLVars(req, map[string]string{"id": tc.id})
 
-			// Create a response recorder
 			rr := httptest.NewRecorder()
-
-			// Call the handler
 			GetPointsHandler(rr, req)
 
-			// Assert the status code
 			require.Equal(t, tc.expectedStatus, rr.Code)
-
-			// Assert the response body
 			require.Equal(t, strings.TrimSpace(tc.expectedBody), strings.TrimSpace(rr.Body.String()))
 		})
 	}
