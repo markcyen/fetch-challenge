@@ -28,12 +28,12 @@ func CalculatePoints(receipt models.Receipt) (int, error) {
 	}
 
 	// Add 50 points if total is round dollar amount with no cents
-	if int(total*100)%100 == 0 {
+	if total == float64(int(total)) {
 		points += 50
 	}
 
 	// Add 25 points if total is a multiple of 0.25
-	if int(total*100)%25 == 0 {
+	if total == float64(int(total)) {
 		points += 25
 	}
 

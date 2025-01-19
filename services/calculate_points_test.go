@@ -7,7 +7,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TODO: Update tests
 func TestCalculatePoints(t *testing.T) {
 	tests := []struct {
 		name           string
@@ -43,7 +42,7 @@ func TestCalculatePoints(t *testing.T) {
 			expectError:    true,
 		},
 		{
-			name: "One point for Retailer Name with one character",
+			name: "One Point for Retailer Name",
 			receipt: models.Receipt{
 				Retailer:     "B",
 				PurchaseDate: "2023-07-14",
@@ -57,41 +56,74 @@ func TestCalculatePoints(t *testing.T) {
 			expectError:    false,
 		},
 		{
-			name: "Odd Purchase Day",
+			name: "50 Points for Round Total and Multiple of 0.25",
 			receipt: models.Receipt{
-				Retailer:     "OddDayRetailer",
-				PurchaseDate: "2023-07-15",
-				PurchaseTime: "13:00",
-				Total:        "10.00",
-				Items:        nil,
+				Retailer:     "",
+				PurchaseDate: "2023-07-14",
+				PurchaseTime: "12:30",
+				Total:        "1.00",
+				Items:        []models.Item{
+					{ShortDescription: "Water", Price: "1.00"},
+				},
+			},
+			expectedPoints: 75,
+			expectError:    false,
+		},
+		{
+			name: "5 Points for Every Two Items",
+			receipt: models.Receipt{
+				Retailer:     "",
+				PurchaseDate: "2023-07-14",
+				PurchaseTime: "13:30",
+				Total:        "4.24",
+				Items: []models.Item{
+					{ShortDescription: "Coke", Price: "2.23"},
+					{ShortDescription: "Water", Price: "2.01"},
+				},
+			},
+			expectedPoints: 5,
+			expectError:    false,
+		},
+		{
+			name: "Trimmed Length as Multiple of 3",
+			receipt: models.Receipt{
+				Retailer:     "",
+				PurchaseDate: "2023-07-14",
+				PurchaseTime: "12:30",
+				Total:        "7.01",
+				Items: []models.Item{
+					{ShortDescription: "Coca-Cola", Price: "5.00"},
+				},
+			},
+			expectedPoints: 1,
+			expectError:    false,
+		},
+		{
+			name: "Purchased on Odd Date",
+			receipt: models.Receipt{
+				Retailer:     "",
+				PurchaseDate: "2023-07-13",
+				PurchaseTime: "12:30",
+				Total:        "2.01",
+				Items:        []models.Item{
+					{ShortDescription: "Water", Price: "2.01"},
+				},
 			},
 			expectedPoints: 6,
 			expectError:    false,
 		},
 		{
-			name: "Purchase Time in Range",
+			name: "Purchased Between 2:00pm and 4:00pm",
 			receipt: models.Receipt{
-				Retailer:     "TimedRetailer",
+				Retailer:     "",
 				PurchaseDate: "2023-07-14",
-				PurchaseTime: "14:30",
-				Total:        "10.00",
-				Items:        nil,
-			},
-			expectedPoints: 10,
-			expectError:    false,
-		},
-		{
-			name: "Item Description Length Points",
-			receipt: models.Receipt{
-				Retailer:     "Retailer",
-				PurchaseDate: "2023-07-14",
-				PurchaseTime: "13:00",
-				Total:        "10.00",
+				PurchaseTime: "14:01",
+				Total:        "1.27",
 				Items: []models.Item{
-					{ShortDescription: "abc", Price: "1.00"},
+					{ShortDescription: "Water", Price: "1.27"},
 				},
 			},
-			expectedPoints: 1, // "abc" length is 3, which is a multiple of 3
+			expectedPoints: 10,
 			expectError:    false,
 		},
 	}
