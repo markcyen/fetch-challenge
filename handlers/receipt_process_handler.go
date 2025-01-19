@@ -7,12 +7,14 @@ import (
 	"log"
 	"net/http"
 	"sync"
+
+	"github.com/google/uuid"
 )
 
 var (
-	receipts = make(map[string]models.Receipt)
+	receipts      = make(map[string]models.Receipt)
 	receiptHashes = make(map[string]string)
-	mu       sync.Mutex
+	mu            sync.Mutex
 )
 
 // ProcessReceiptHandler takes a receipt and generates an id for it
@@ -28,7 +30,7 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Store receipt id and details in in-memory storage
 	mu.Lock()
-	defer	mu.Unlock()
+	defer mu.Unlock()
 
 	// Check if existing ID exists for a receipt that has already been processed
 	if existingID, found := receiptHashes[receiptHash]; found {
@@ -38,7 +40,7 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Generate unique id for new receipt
-	id := utils.GenerateUniqueID()
+	id := uuid.New().String()
 	receipts[id] = receipt
 	receiptHashes[receiptHash] = id
 
