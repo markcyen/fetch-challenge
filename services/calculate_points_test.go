@@ -4,7 +4,7 @@ import (
 	"fetch-challenge/models"
 	"testing"
 
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestCalculatePoints(t *testing.T) {
@@ -48,7 +48,7 @@ func TestCalculatePoints(t *testing.T) {
 				PurchaseDate: "2023-07-14",
 				PurchaseTime: "12:30",
 				Total:        "1.29",
-				Items:        []models.Item{
+				Items: []models.Item{
 					{ShortDescription: "Water", Price: "1.29"},
 				},
 			},
@@ -62,7 +62,7 @@ func TestCalculatePoints(t *testing.T) {
 				PurchaseDate: "2023-07-14",
 				PurchaseTime: "12:30",
 				Total:        "1.00",
-				Items:        []models.Item{
+				Items: []models.Item{
 					{ShortDescription: "Water", Price: "1.00"},
 				},
 			},
@@ -105,7 +105,7 @@ func TestCalculatePoints(t *testing.T) {
 				PurchaseDate: "2023-07-13",
 				PurchaseTime: "12:30",
 				Total:        "2.01",
-				Items:        []models.Item{
+				Items: []models.Item{
 					{ShortDescription: "Water", Price: "2.01"},
 				},
 			},
@@ -132,10 +132,10 @@ func TestCalculatePoints(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			points, err := CalculatePoints(tc.receipt)
 			if tc.expectError {
-				require.Error(t, err, "Expected an error but didn't get one")
+				assert.Error(t, err, "Expected an error but didn't get one")
 			} else {
-				require.NoError(t, err, "Expected no error but got one")
-				require.Equal(t, tc.expectedPoints, points, "Points mismatch")
+				assert.NoError(t, err, "Expected no error but got one")
+				assert.Equal(t, tc.expectedPoints, points, "Points mismatch")
 			}
 		})
 	}

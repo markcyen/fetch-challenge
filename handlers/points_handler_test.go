@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/mux"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetPointsHandler(t *testing.T) {
@@ -33,7 +33,7 @@ func TestGetPointsHandler(t *testing.T) {
 				{ShortDescription: "Doritos Nacho Cheese", Price: "3.35"},
 				{ShortDescription: "   Klarbrunn 12-PK 12 FL OZ  ", Price: "12.00"},
 			},
-			Total:        "35.35",
+			Total: "35.35",
 		},
 	}
 
@@ -73,7 +73,7 @@ func TestGetPointsHandler(t *testing.T) {
 			receipts = tc.mockReceipts
 
 			req, err := http.NewRequest(http.MethodGet, "/receipts/"+tc.id+"/points", nil)
-			require.NoError(t, err)
+			assert.NoError(t, err)
 
 			// Mock the path variables for the request
 			req = mux.SetURLVars(req, map[string]string{"id": tc.id})
@@ -81,8 +81,8 @@ func TestGetPointsHandler(t *testing.T) {
 			rr := httptest.NewRecorder()
 			GetPointsHandler(rr, req)
 
-			require.Equal(t, tc.expectedStatus, rr.Code)
-			require.Equal(t, strings.TrimSpace(tc.expectedBody), strings.TrimSpace(rr.Body.String()))
+			assert.Equal(t, tc.expectedStatus, rr.Code)
+			assert.Equal(t, strings.TrimSpace(tc.expectedBody), strings.TrimSpace(rr.Body.String()))
 		})
 	}
 }

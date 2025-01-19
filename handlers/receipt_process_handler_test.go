@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestProcessReceiptHandler(t *testing.T) {
@@ -50,7 +49,7 @@ func TestProcessReceiptHandler(t *testing.T) {
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			req, err := http.NewRequest(http.MethodPost, "/receipts/process", bytes.NewBuffer([]byte(tc.requestBody)))
-			require.NoError(t, err, "Failed to create request")
+			assert.NoError(t, err, "Failed to create request")
 			req.Header.Set("Content-Type", "application/json")
 
 			rr := httptest.NewRecorder()
@@ -68,10 +67,10 @@ func TestProcessReceiptHandler(t *testing.T) {
 					t.Fatalf("Failed to parse response: %v", err)
 				}
 				currentID, exists := response["id"]
-				require.True(t, exists, "Response does not contain 'id' for test case %q", tc.name)
+				assert.True(t, exists, "Response does not contain 'id' for test case %q", tc.name)
 
 				if previousID == "" {
-					previousID = currentID 
+					previousID = currentID
 				} else if previousID != currentID {
 					t.Errorf("Expected duplicate receipt to return the same ID, got %q and %q", previousID, currentID)
 				}
