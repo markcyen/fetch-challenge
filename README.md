@@ -1,16 +1,67 @@
 # fetch-challenge
 
-directory structure:
-├── go.mod                          
-├── go.sum                          
-├── main.go                         # Entry point for endpoints
-├── handlers/
-│   ├── receipt_process_handler.go  # Handles receipt processing (POST /receipts/process)
-│   ├── points_handler.go           # Handles points retrieval (GET /receipts/:id/points)
-├── models/
-│   └── receipt.go                  # Defines the Receipt and related models
-├── services/
-│   └── points_service.go           # Business logic for calculating points
-└── utils/
-    └── id_generator.go             # Utility for generating unique IDs
+## Description
+
+Fetch Backend Code Challenge: [receipt-processor-challenge](https://github.com/fetch-rewards/receipt-processor-challenge)
+
+
+## Language
+
+This program was accomplished in Go 1.23.
+
+## Dependencies
+
+- gorilla/mux for in-memory storage
+- stretchr/testify for standard Go testing
+
+## Running the program
+
+For `POST /receipts/process`:
+
+In the terminal, type in the command `go run main.go`. In a separate terminal tab, curl the following -
+```bash
+curl -X POST http://localhost:8080/receipts/process \             
+-H "Content-Type: application/json" \
+-d '{
+  "retailer": "M&M Corner Market",
+  "purchaseDate": "2022-03-20",
+  "purchaseTime": "14:33",
+  "items": [
+    {
+      "shortDescription": "Gatorade",
+      "price": "2.25"
+    },{
+      "shortDescription": "Gatorade",
+      "price": "2.25"
+    },{
+      "shortDescription": "Gatorade",
+      "price": "2.25"
+    },{
+      "shortDescription": "Gatorade",
+      "price": "2.25"
+    }
+  ],
+  "total": "9.00"
+}'
+
+```
+Response should be the following where ID is a generated unique ID for the receipt data that was submitted: 
+```bash
+{"id":"<UNIQUE_ID>"}
+```
+
+For `GET /receipts/{id}/points`:
+In the terminal, curl the following command using the response from the POST above:
+```bash
+curl -X GET http://localhost:8080/receipts/<UNIQUE_ID>/points
+```
+Response should be the points calculated based on the [Rules](https://github.com/fetch-rewards/receipt-processor-challenge/tree/main?tab=readme-ov-file#rules):
+```bash
+{"points":109}
+```
+
+## Testing
+
+## About the author
+
 
