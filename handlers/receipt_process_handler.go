@@ -1,22 +1,17 @@
 package handlers
 
 import (
-	"crypto/sha256"
 	"encoding/json"
 	"fetch-challenge/models"
-	"fmt"
 	"log"
 	"net/http"
 	"regexp"
-	"sync"
 
 	"github.com/google/uuid"
 )
 
 var (
-	receipts      = make(map[string]models.Receipt)
-	receiptHashes = make(map[string]string)
-	mu            sync.Mutex
+	receipts = make(map[string]models.Receipt)
 )
 
 // ProcessReceiptHandler takes a receipt and generates an id for it
@@ -40,26 +35,11 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Generate hash for receipt to capture any duplicates
-	receiptHash := generateReceiptHash(receipt)
-
-	// Store receipt id and details in in-memory storage
-	mu.Lock()
-	defer mu.Unlock()
-
-	// Check if existing ID exists for a receipt that has already been processed
-	if existingID, found := receiptHashes[receiptHash]; found {
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]string{"id": existingID})
-		return
-	}
-
-	// Generate unique id for new receipt
+	// Generate unique id for receipt
 	id := uuid.New().String()
 	receipts[id] = receipt
-	receiptHashes[receiptHash] = id
 
-	log.Printf("\nReceipt saved: ID=%s, Hash: %s, Data=%+v\n", id, receiptHash, receipt)
+	log.Printf("\nReceipt saved: ID=%s, Data=%+v\n", id, receipt)
 
 	response := models.ReceiptResponse{ID: id}
 	w.Header().Set("Content-Type", "application/json")
@@ -112,12 +92,4 @@ func isValidShortDescription(shortDescription string) bool {
 	regex := regexp.MustCompile(pattern)
 
 	return regex.MatchString(shortDescription)
-}
-
-// generateReceiptHash is a helper function to generate a hash 
-// for a receipt to check for duplicates
-func generateReceiptHash(receipt models.Receipt) string {
-	data, _ := json.Marshal(receipt)
-	hash := sha256.Sum256(data)
-	return fmt.Sprintf("%x", hash)
 }

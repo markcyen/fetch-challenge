@@ -21,10 +21,7 @@ func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Look up receipt by id in the in-memory storage
-	mu.Lock()
 	receipt, exists := receipts[id]
-	mu.Unlock()
 
 	if !exists {
 		http.Error(w, "No receipt found for that ID.", http.StatusNotFound)
@@ -32,6 +29,7 @@ func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Calculate points
+	// TODO: catch errors from internal calculate points
 	points := services.CalculatePoints(receipt)
 
 	// Respond with the points

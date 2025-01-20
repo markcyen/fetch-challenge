@@ -14,7 +14,6 @@ This program was accomplished in Go 1.23.
 - `gorilla/mux` for in-memory storage
 - `google/uuid` for id pattern
 - `regexp` for setting pattern on valid fields (ie, retailer name, date, time, total, description and price)
-- `crypto/sha256` for hashing to identify existing receipts
 - `stretchr/testify` for standard Go testing
 
 ## Running the program
