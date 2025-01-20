@@ -13,7 +13,7 @@ This program was accomplished in Go 1.23.
 
 - `gorilla/mux` for in-memory storage
 - `google/uuid` for id pattern
-- `regexp` for setting pattern on valid fields (ie, retailer name, date, time, total, description and price)
+- `regexp` for setting pattern on valid field values (ie, retailer name, date, time, total, description and price)
 - `stretchr/testify` for standard Go testing
 
 ## Running the program
@@ -75,4 +75,4 @@ To run test files, run `go test ./...` in the command line to see results.
 
 ## About the author
 
-Hi 👋🏼 I am Mark and I appreciate the opportunity to work on this tech assessment. I have about 3 years of software engineering experience, primarily on the backend in Go, with some experience in Python and Ruby on Rails. Prior to that, I have worked in finance, consulting and military. Let's connect [LinkedIn Profile](https://www.linkedin.com/in/markcyen/)!
+Hi 👋🏼 I am Mark and I appreciate the opportunity to work on this tech assessment. I have about 3 years of software engineering experience, primarily on the backend in Go, with some experience in Python and Ruby on Rails. Prior to that, I have worked in finance, consulting and the military. Let's connect on [LinkedIn](https://www.linkedin.com/in/markcyen/)!
