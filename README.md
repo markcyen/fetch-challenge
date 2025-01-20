@@ -22,7 +22,7 @@ For `POST /receipts/process`:
 
 In the terminal, type in the command `go run main.go`. In a separate terminal tab, curl the following -
 ```bash
-curl -X POST http://localhost:8080/receipts/process \             
+curl -X POST http://localhost:8080/receipts/process \
 -H "Content-Type: application/json" \
 -d '{
   "retailer": "M&M Corner Market",
@@ -43,19 +43,26 @@ curl -X POST http://localhost:8080/receipts/process \
       "price": "2.25"
     }
   ],
-  "total": "9.00"
+  "total": "9.00" 
 }'
-
 ```
 Response should be the following where ID is a generated unique ID for the receipt data that was submitted: 
 ```bash
 {"id":"<UNIQUE_ID>"}
+```
+Example `"id"` should look like this:
+```bash
+{"id":"4d1ebc47-62a8-4116-9c61-ad60d7a343fa"}
 ```
 
 For `GET /receipts/{id}/points`:
 In the terminal, curl the following command using the response from the POST above:
 ```bash
 curl -X GET http://localhost:8080/receipts/<UNIQUE_ID>/points
+```
+Example GET curl:
+```bash
+curl -X GET http://localhost:8080/receipts/4d1ebc47-62a8-4116-9c61-ad60d7a343fa/points
 ```
 Response should be the points calculated based on the [Rules](https://github.com/fetch-rewards/receipt-processor-challenge/tree/main?tab=readme-ov-file#rules):
 ```bash
