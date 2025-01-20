@@ -28,7 +28,7 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if !isValidRetailer(receipt.Retailer) || !isValidCurrency(receipt.Total) || len(receipt.Items) < 1 {
+	if !isValidRetailer(receipt.Retailer) || !isValidCurrency(receipt.Total) || len(receipt.Items) < 1 || !isValidPurchaseDate(receipt.PurchaseDate) || !isValidPurchaseTime(receipt.PurchaseTime) {
 		http.Error(w, "The receipt is invalid.", http.StatusBadRequest)
 		return
 	}
@@ -69,15 +69,6 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// isValidCurrency checks for specified regular expression pattern on total and price
-// For instance, "1.23" is valid, but "1.2", "123", ".12", and "1.234" are not
-func isValidCurrency(amount string) bool {
-	pattern := "^\\d+\\.\\d{2}$"
-	regex := regexp.MustCompile(pattern)
-
-	return regex.MatchString(amount)
-}
-
 // isValidRetailer checks for specified regular expression pattern on the retailer name
 // For instance, "Super-Market" and "Shop & Save" are valid, but "Super@Market!" is not
 func isValidRetailer(retailer string) bool {
@@ -85,6 +76,33 @@ func isValidRetailer(retailer string) bool {
 	regex := regexp.MustCompile(pattern)
 
 	return regex.MatchString(retailer)
+}
+
+// isValidPurchaseDate checks for specified regular expression pattern on the purchase date
+// For instance, "2022-01-17" is valid, but "2022-17-01" or "2022/01/17" is not
+func isValidPurchaseDate(purchaseDate string) bool {
+	pattern := "^\\d{4}-\\d{2}-\\d{2}$"
+	regex := regexp.MustCompile(pattern)
+
+	return regex.MatchString(purchaseDate)
+}
+
+// isValidPurchaseTime checks for specified regular expression pattern on the purchase time
+// For instance, "13:01" is valid, but " 13:01" or "7:12" is not
+func isValidPurchaseTime(purchaseTime string) bool {
+	pattern := "^([01]\\d|2[0-3]):[0-5]\\d$"
+	regex := regexp.MustCompile(pattern)
+
+	return regex.MatchString(purchaseTime)
+}
+
+// isValidCurrency checks for specified regular expression pattern on total and price
+// For instance, "1.23" is valid, but "1.2", "123", ".12", and "1.234" are not
+func isValidCurrency(amount string) bool {
+	pattern := "^\\d+\\.\\d{2}$"
+	regex := regexp.MustCompile(pattern)
+
+	return regex.MatchString(amount)
 }
 
 // isValidShortDescription checks for specified regular expression pattern on the short description

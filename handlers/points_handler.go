@@ -17,7 +17,7 @@ func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Check the existance of an id
 	if id == "" {
-		http.Error(w, "No receipt found for that ID", http.StatusNotFound)
+		http.Error(w, "No receipt found for that ID.", http.StatusNotFound)
 		return
 	}
 
@@ -27,16 +27,12 @@ func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 	mu.Unlock()
 
 	if !exists {
-		http.Error(w, "No receipt found for that ID", http.StatusNotFound)
+		http.Error(w, "No receipt found for that ID.", http.StatusNotFound)
 		return
 	}
 
 	// Calculate points
-	points, err := services.CalculatePoints(receipt)
-	if err != nil {
-		http.Error(w, "Error in points calculation", http.StatusUnprocessableEntity)
-		return
-	}
+	points := services.CalculatePoints(receipt)
 
 	// Respond with the points
 	w.Header().Set("Content-Type", "application/json")

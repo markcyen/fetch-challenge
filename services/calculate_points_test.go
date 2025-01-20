@@ -12,7 +12,6 @@ func TestCalculatePoints(t *testing.T) {
 		name           string
 		receipt        models.Receipt
 		expectedPoints int
-		expectError    bool
 	}{
 		{
 			name: "Basic Receipt - All Scenarios",
@@ -27,7 +26,6 @@ func TestCalculatePoints(t *testing.T) {
 				},
 			},
 			expectedPoints: 1 + 50 + 25 + 5 + 1 + 6 + 10,
-			expectError:    false,
 		},
 		{
 			name: "Invalid Total Format",
@@ -39,7 +37,6 @@ func TestCalculatePoints(t *testing.T) {
 				Items:        nil,
 			},
 			expectedPoints: 0,
-			expectError:    true,
 		},
 		{
 			name: "One Point for Retailer Name",
@@ -53,7 +50,6 @@ func TestCalculatePoints(t *testing.T) {
 				},
 			},
 			expectedPoints: 1,
-			expectError:    false,
 		},
 		{
 			name: "50 Points for Round Total and Multiple of 0.25",
@@ -67,7 +63,6 @@ func TestCalculatePoints(t *testing.T) {
 				},
 			},
 			expectedPoints: 75,
-			expectError:    false,
 		},
 		{
 			name: "5 Points for Every Two Items",
@@ -82,7 +77,6 @@ func TestCalculatePoints(t *testing.T) {
 				},
 			},
 			expectedPoints: 5,
-			expectError:    false,
 		},
 		{
 			name: "Trimmed Length as Multiple of 3",
@@ -96,7 +90,6 @@ func TestCalculatePoints(t *testing.T) {
 				},
 			},
 			expectedPoints: 1,
-			expectError:    false,
 		},
 		{
 			name: "Purchased on Odd Date",
@@ -110,7 +103,6 @@ func TestCalculatePoints(t *testing.T) {
 				},
 			},
 			expectedPoints: 6,
-			expectError:    false,
 		},
 		{
 			name: "Purchased Between 2:00pm and 4:00pm",
@@ -124,19 +116,13 @@ func TestCalculatePoints(t *testing.T) {
 				},
 			},
 			expectedPoints: 10,
-			expectError:    false,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
-			points, err := CalculatePoints(tc.receipt)
-			if tc.expectError {
-				assert.Error(t, err, "Expected an error but didn't get one")
-			} else {
-				assert.NoError(t, err, "Expected no error but got one")
-				assert.Equal(t, tc.expectedPoints, points, "Points mismatch")
-			}
+			points := CalculatePoints(tc.receipt)
+			assert.Equal(t, tc.expectedPoints, points, "Points mismatch")
 		})
 	}
 }

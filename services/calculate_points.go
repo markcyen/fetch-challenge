@@ -2,7 +2,6 @@ package services
 
 import (
 	"fetch-challenge/models"
-	"fmt"
 	"math"
 	"strconv"
 	"strings"
@@ -11,7 +10,7 @@ import (
 )
 
 // CalculatePoints calculate points based on specific criteria in the receipt
-func CalculatePoints(receipt models.Receipt) (int, error) {
+func CalculatePoints(receipt models.Receipt) int {
 	points := 0
 
 	// Add one point for every alphanumeric character in retailer name
@@ -53,11 +52,7 @@ func CalculatePoints(receipt models.Receipt) (int, error) {
 
 	// Add 6 points if the day in the purchase date is odd
 	day := receipt.PurchaseDate[len(receipt.PurchaseDate)-2:]
-	convertDay, err := strconv.Atoi(day)
-	if err != nil {
-		fmt.Printf("Error converting the day: %v\n", err)
-		return 0, err
-	}
+	convertDay, _ := strconv.Atoi(day)
 	if convertDay%2 != 0 {
 		points += 6
 	}
@@ -65,14 +60,10 @@ func CalculatePoints(receipt models.Receipt) (int, error) {
 	// Add 10 points if purchase time is after 2:00pm (14:00) and before 4:00pm (16:00)
 	startTime, _ := time.Parse("15:04", "14:00")
 	endTime, _ := time.Parse("15:04", "16:00")
-	convertTime, err := time.Parse("15:04", receipt.PurchaseTime)
-	if err != nil {
-		fmt.Printf("Error in parsing purchase time: %v\n", err)
-		return 0, err
-	}
+	convertTime, _ := time.Parse("15:04", receipt.PurchaseTime)
 	if convertTime.After(startTime) && convertTime.Before(endTime) {
 		points += 10
 	}
 
-	return points, nil
+	return points
 }
