@@ -22,15 +22,17 @@ func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	receipt, exists := receipts[id]
-
 	if !exists {
 		http.Error(w, "No receipt found for that ID.", http.StatusNotFound)
 		return
 	}
 
 	// Calculate points
-	// TODO: catch errors from internal calculate points
-	points := services.CalculatePoints(receipt)
+	points, err := services.CalculatePoints(receipt)
+	if err != nil {
+		http.Error(w, "The receipt is invalid.", http.StatusBadRequest)
+		return
+	}
 
 	// Respond with the points
 	w.Header().Set("Content-Type", "application/json")

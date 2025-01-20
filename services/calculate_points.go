@@ -10,7 +10,7 @@ import (
 )
 
 // CalculatePoints calculate points based on specific criteria in the receipt
-func CalculatePoints(receipt models.Receipt) int { // change to (int, error)
+func CalculatePoints(receipt models.Receipt) (int, error) {
 	points := 0
 
 	// Add one point for every alphanumeric character in retailer name
@@ -20,8 +20,10 @@ func CalculatePoints(receipt models.Receipt) int { // change to (int, error)
 		}
 	}
 
-	// TODO: catch errors just in case
-	total, _ := strconv.ParseFloat(receipt.Total, 64)
+	total, err := strconv.ParseFloat(receipt.Total, 64)
+	if err != nil {
+		return 0, err
+	}
 
 	// Add 50 points if total is round dollar amount with no cents
 	if total == float64(int(total)) {
@@ -29,7 +31,7 @@ func CalculatePoints(receipt models.Receipt) int { // change to (int, error)
 	}
 
 	// Add 25 points if total is a multiple of 0.25
-	if int(total*100)%25 == 0 {
+	if int(math.Round(total*100))%25 == 0 {
 		points += 25
 	}
 
@@ -42,36 +44,33 @@ func CalculatePoints(receipt models.Receipt) int { // change to (int, error)
 		if item.ShortDescription == "" {
 			continue
 		}
-		// try trimming suffix and prefix
-		// strings.Trim(item.ShortDescription, " ")
+
 		trimmedDescription := strings.TrimSpace(item.ShortDescription)
 		cleanDescription := strings.Join(strings.Fields(trimmedDescription), " ")
 		if len(cleanDescription)%3 == 0 {
-			// TODO: catch errors just in case
-			price, _ := strconv.ParseFloat(item.Price, 64)
-
-			points += int(math.Ceil(price * 0.2))
+			if price, err := strconv.ParseFloat(item.Price, 64); err != nil {
+				return 0, err
+			} else {
+				points += int(math.Ceil(price * 0.2))
+			}
 		}
 	}
 
 	// Add 6 points if the day in the purchase date is odd
-	// TODO: try converting to date and get the day itself
-	day := receipt.PurchaseDate[len(receipt.PurchaseDate)-2:]
-	// TODO: catch errors just in case
-	convertDay, _ := strconv.Atoi(day)
-	if convertDay%2 != 0 {
+	if parsedDate, err := time.Parse("2006-01-02", receipt.PurchaseDate); err != nil {
+		return 0, err
+	} else if parsedDate.Day()%2 != 0 {
 		points += 6
 	}
 
 	// Add 10 points if purchase time is after 2:00pm (14:00) and before 4:00pm (16:00)
-	// TODO: handle errors for parsing
 	startTime, _ := time.Parse("15:04", "14:00")
 	endTime, _ := time.Parse("15:04", "16:00")
-	// TODO: catch errors just in case
-	convertTime, _ := time.Parse("15:04", receipt.PurchaseTime)
-	if convertTime.After(startTime) && convertTime.Before(endTime) {
+	if convertTime, err := time.Parse("15:04", receipt.PurchaseTime); err != nil {
+		return 0, err
+	} else if convertTime.After(startTime) && convertTime.Before(endTime) {
 		points += 10
 	}
 
-	return points
+	return points, nil
 }
