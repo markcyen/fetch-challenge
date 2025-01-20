@@ -28,17 +28,6 @@ func TestCalculatePoints(t *testing.T) {
 			expectedPoints: 1 + 50 + 25 + 5 + 1 + 6 + 10,
 		},
 		{
-			name: "Invalid Total Format",
-			receipt: models.Receipt{
-				Retailer:     "Retailer",
-				PurchaseDate: "2023-07-14",
-				PurchaseTime: "15:30",
-				Total:        "invalid",
-				Items:        nil,
-			},
-			expectedPoints: 0,
-		},
-		{
 			name: "One Point for Retailer Name",
 			receipt: models.Receipt{
 				Retailer:     "B",

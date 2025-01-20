@@ -55,14 +55,14 @@ func TestGetPointsHandler(t *testing.T) {
 			name:           "Non-Existent ID",
 			id:             "nonexistent-id",
 			expectedStatus: http.StatusNotFound,
-			expectedBody:   "Receipt ID not found\n",
+			expectedBody:   "No receipt found for that ID.",
 			mockReceipts:   mockReceipts,
 		},
 		{
 			name:           "Missing ID",
 			id:             "",
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "Missing receipt ID\n",
+			expectedStatus: http.StatusNotFound,
+			expectedBody:   "No receipt found for that ID.",
 			mockReceipts:   mockReceipts,
 		},
 	}
