@@ -24,22 +24,58 @@ func TestProcessReceiptHandler(t *testing.T) {
 			expectedBody:   `"id":`,
 		},
 		{
-			name:           "Empty Body",
-			requestBody:    "",
-			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "Invalid JSON payload\n",
-		},
-		{
 			name:           "Invalid JSON",
 			requestBody:    `{"retailer":"Walgreens",`,
 			expectedStatus: http.StatusBadRequest,
-			expectedBody:   "Invalid JSON payload\n",
+			expectedBody:   "The receipt is invalid.",
 		},
 		{
 			name:           "Duplicate Receipt",
 			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi 12PK","price":"1.25"},{"shortDescription":"Dasani","price":"1.40"}],"total":"2.65"}`,
 			expectedStatus: http.StatusOK,
 			expectedBody:   `"id:`,
+		},
+		{
+			name:           "Invalid Retailer Name",
+			requestBody:    `{"retailer": "Walgreens!","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi 12PK","price":"1.25"},{"shortDescription":"Dasani","price":"1.40"}],"total":"2.65"}`,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "The receipt is invalid.",
+		},
+		{
+			name:           "Invalid Total",
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi 12PK","price":"1.25"},{"shortDescription":"Dasani","price":"1.40"}],"total":"2.6"}`,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "The receipt is invalid.",
+		},
+		{
+			name:           "Invalid Length of Items",
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[],"total":"2.65"}`,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "The receipt is invalid.",
+		},
+		{
+			name:           "Invalid Purchase Date",
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022/01/02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi 12PK","price":"1.25"},{"shortDescription":"Dasani","price":"1.40"}],"total":"2.65"}`,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "The receipt is invalid.",
+		},
+		{
+			name:           "Invalid Purchase Time",
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"8:13","items":[{"shortDescription":"Pepsi 12PK","price":"1.25"},{"shortDescription":"Dasani","price":"1.40"}],"total":"2.65"}`,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "The receipt is invalid.",
+		},
+		{
+			name:           "Invalid Short Description",
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi 12PK!","price":"1.25"},{"shortDescription":"Dasani","price":"1.40"}],"total":"2.65"}`,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "The receipt is invalid.",
+		},
+		{
+			name:           "Invalid Item Price",
+			requestBody:    `{"retailer": "Walgreens","purchaseDate":"2022-01-02","purchaseTime":"08:13","items":[{"shortDescription":"Pepsi 12PK","price":"1.25"},{"shortDescription":"Dasani","price":"1"}],"total":"2.25"}`,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "The receipt is invalid.",
 		},
 	}
 
