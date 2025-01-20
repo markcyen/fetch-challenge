@@ -1,9 +1,5 @@
 package models
 
-type Receipts struct {
-	Receipts []Receipt `json:"receipts"`
-}
-
 type Receipt struct {
 	Retailer     string `json:"retailer"`
 	PurchaseDate string `json:"purchaseDate"`

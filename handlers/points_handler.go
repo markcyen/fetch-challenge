@@ -8,6 +8,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// GetPointsHandler handles the points response
+// GET /receipts/{id}/points
 func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 	// Extract the receipt ID from URL path (/receipts/{id}/points)
 	vars := mux.Vars(r)
@@ -15,7 +17,7 @@ func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Check the existance of an id
 	if id == "" {
-		http.Error(w, "Missing receipt ID", http.StatusBadRequest)
+		http.Error(w, "No receipt found for that ID", http.StatusNotFound)
 		return
 	}
 
@@ -25,7 +27,7 @@ func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 	mu.Unlock()
 
 	if !exists {
-		http.Error(w, "Receipt ID not found", http.StatusNotFound)
+		http.Error(w, "No receipt found for that ID", http.StatusNotFound)
 		return
 	}
 

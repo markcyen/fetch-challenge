@@ -21,11 +21,7 @@ func CalculatePoints(receipt models.Receipt) (int, error) {
 		}
 	}
 
-	total, err := strconv.ParseFloat(receipt.Total, 64)
-	if err != nil {
-		fmt.Printf("Error parsing total string to float: %v\n", err)
-		return 0, err
-	}
+	total, _ := strconv.ParseFloat(receipt.Total, 64)
 
 	// Add 50 points if total is round dollar amount with no cents
 	if total == float64(int(total)) {
@@ -49,11 +45,8 @@ func CalculatePoints(receipt models.Receipt) (int, error) {
 		trimmedDescription := strings.TrimSpace(item.ShortDescription)
 		cleanDescription := strings.Join(strings.Fields(trimmedDescription), " ")
 		if len(cleanDescription)%3 == 0 {
-			price, err := strconv.ParseFloat(item.Price, 64)
-			if err != nil {
-				fmt.Printf("Error converting the price: %v\n", err)
-				return 0, err
-			}
+			price, _ := strconv.ParseFloat(item.Price, 64)
+
 			points += int(math.Ceil(price * 0.2))
 		}
 	}
