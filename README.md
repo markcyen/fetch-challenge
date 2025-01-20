@@ -12,6 +12,9 @@ This program was accomplished in Go 1.23.
 ## Dependencies
 
 - gorilla/mux for in-memory storage
+- google/uuid for id pattern
+- regexp for setting pattern on valid fields (ie, retailer name, date, time, total, description and price)
+- crypto/sha256 for hashing to identify existing receipts
 - stretchr/testify for standard Go testing
 
 ## Running the program
@@ -61,6 +64,8 @@ Response should be the points calculated based on the [Rules](https://github.com
 ```
 
 ## Testing
+
+To run test files, run `go test ./...` in the command line to see results. 
 
 ## About the author
 
