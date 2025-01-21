@@ -21,7 +21,7 @@ func GetPointsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	receipt, exists := receipts[id]
+	receipt, exists := Receipts[id]
 	if !exists {
 		http.Error(w, "No receipt found for that ID.", http.StatusNotFound)
 		return

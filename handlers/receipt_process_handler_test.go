@@ -23,7 +23,7 @@ func TestProcessReceiptHandler(t *testing.T) {
 			expectedBody:   `"id":`,
 		},
 		{
-			name:           "Invalid JSON",
+			name:           "Invalid JSON Decoding",
 			requestBody:    `{"retailer":"Walgreens",`,
 			expectedStatus: http.StatusBadRequest,
 			expectedBody:   "The receipt is invalid.",
@@ -82,10 +82,7 @@ func TestProcessReceiptHandler(t *testing.T) {
 			ProcessReceiptHandler(rr, req)
 
 			assert.Equal(t, tc.expectedStatus, rr.Code, "Unexpected status code for test case %q", tc.name)
-
-			if tc.name != "Duplicate Receipt" {
-				assert.Contains(t, rr.Body.String(), tc.expectedBody, "Response body does not contain expected substring for test case %q", tc.name)
-			}
+			assert.Contains(t, rr.Body.String(), tc.expectedBody, "Unexpected response body for %s", tc.name)
 		})
 	}
 }

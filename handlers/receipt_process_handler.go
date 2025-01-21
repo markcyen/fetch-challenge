@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	receipts = make(map[string]models.Receipt)
+	Receipts = make(map[string]models.Receipt)
 )
 
 // ProcessReceiptHandler takes a receipt and generates an id for it
@@ -37,7 +37,7 @@ func ProcessReceiptHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Generate unique id for receipt
 	id := uuid.New().String()
-	receipts[id] = receipt
+	Receipts[id] = receipt
 
 	log.Printf("\nReceipt saved: ID=%s, Data=%+v\n", id, receipt)
 

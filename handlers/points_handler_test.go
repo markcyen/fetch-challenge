@@ -12,16 +12,7 @@ import (
 )
 
 func TestGetPointsHandler(t *testing.T) {
-	// Backup the original `receipts`
-	originalReceipts := receipts
-
-	// Restore the original `receipts` after tests
-	defer func() {
-		receipts = originalReceipts
-	}()
-
-	// Define mock receipt data
-	mockReceipts := map[string]models.Receipt{
+	mockReceipt := map[string]models.Receipt{
 		"123456789": {
 			Retailer:     "Target",
 			PurchaseDate: "2022-01-01",
@@ -37,6 +28,18 @@ func TestGetPointsHandler(t *testing.T) {
 		},
 	}
 
+	mockInvalidReceipt := map[string]models.Receipt{
+		"987654321": {
+			Retailer:     "Target",
+			PurchaseDate: "2022/01/01",
+			PurchaseTime: "13:01",
+			Items: []models.Item{
+				{ShortDescription: "Mountain Dew 12PK", Price: "6.49"},
+			},
+			Total: "6.49",
+		},
+	}
+
 	tests := []struct {
 		name           string
 		id             string
@@ -49,28 +52,35 @@ func TestGetPointsHandler(t *testing.T) {
 			id:             "123456789",
 			expectedStatus: http.StatusOK,
 			expectedBody:   `{"points":28}`, // Update with expected points
-			mockReceipts:   mockReceipts,
+			mockReceipts:   mockReceipt,
 		},
 		{
 			name:           "Non-Existent ID",
 			id:             "nonexistent-id",
 			expectedStatus: http.StatusNotFound,
 			expectedBody:   "No receipt found for that ID.",
-			mockReceipts:   mockReceipts,
+			mockReceipts:   mockReceipt,
 		},
 		{
 			name:           "Missing ID",
 			id:             "",
 			expectedStatus: http.StatusNotFound,
 			expectedBody:   "No receipt found for that ID.",
-			mockReceipts:   mockReceipts,
+			mockReceipts:   mockReceipt,
+		},
+		{
+			name:           "Invalid Field Purchase Date",
+			id:             "987654321",
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "The receipt is invalid.",
+			mockReceipts:   mockInvalidReceipt,
 		},
 	}
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
 			// Override `receipts` for the test case
-			receipts = tc.mockReceipts
+			Receipts = tc.mockReceipts
 
 			req, err := http.NewRequest(http.MethodGet, "/receipts/"+tc.id+"/points", nil)
 			assert.NoError(t, err)
