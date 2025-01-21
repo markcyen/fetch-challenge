@@ -20,6 +20,7 @@ func CalculatePoints(receipt models.Receipt) (int, error) {
 		}
 	}
 
+	// Convert total to float64 from string
 	total, err := strconv.ParseFloat(receipt.Total, 64)
 	if err != nil {
 		return 0, err

@@ -71,7 +71,10 @@ Response should be the points calculated based on the [Rules](https://github.com
 
 ## Testing
 
-To run test files, run `go test ./...` in the command line to see results. 
+To run test files and get the test coverage, type in the following commands:
+```bash
+go test -cover ./...
+```
 
 ## About the author
 
