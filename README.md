@@ -57,7 +57,7 @@ Example `"id"` should look like this:
 Note: Feel free to manipulate the field values to check what points are calculated or what values would make the receipt invalid.
 
 #### For `GET /receipts/{id}/points`:
-In the terminal, curl the following command using the response from the POST above:
+In the terminal, curl the following command using the `id` from the responsen on the POST above:
 ```bash
 curl -X GET http://localhost:8080/receipts/<UNIQUE_ID>/points
 ```
